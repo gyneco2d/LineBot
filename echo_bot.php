@@ -31,24 +31,8 @@ foreach($client->parseEvents() as $event) {
                 case 'text':
                     //strcmp 文字列の比較
                     if(strcmp($message['text'], '今日の予定') == 0) {
-                        
-                        $url = $calendar->makeURL(date("n"), date("j"), date("Y"));
-                        $results = file_get_contents($url);
-                        //json文字列をphp変数に変換する
-                        $json = json_decode($results, true);
- 
-                        //予定のタイトル
-                        for($i=0; $i<10; $i++) {
-                            $titles[] = $json["items"][$i]["summary"];
-                        }
-                        
-                        $no = 0;
-                        $length = count($titles);
-                        foreach($titles as $title) {
-                            $reply .= $title;
-                            if($no++ !== $length) $reply .= "\n";
-                            if($json["items"][$i]["summary"] === "") break;
-                        }
+                        $reply = $calendar->makeURL(date("n"), date("j"), date("Y"));
+//                        $reply = $calendar->getTitles();
  
                         $client->replyMessage(array(
                             'replyToken' => $event['replyToken'],
