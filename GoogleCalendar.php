@@ -8,11 +8,11 @@ class GoogleCalendar
         $this->url = $API_URL;
     }
     
-    public function makeURL($month, $day, $year)
+    public function makeURL()
     {
-//        $month = date("n");
-//        $day = date("j");
-//        $year = date("Y");
+        $month = date("n");
+        $day = date("j");
+        $year = date("Y");
         
         $this->t = mktime(0, 0, 0, $month, $day, $year);
         $day++;
@@ -26,8 +26,12 @@ class GoogleCalendar
  
         $this->url .= '&'.implode('&', $this->params);
         
-//        return $this->url;
-        $this->results = file_get_contents($this->url);
+        return $this->url;
+    }
+    
+    public function getSummary()
+    {
+        $this->results = file_get_contents(self::makeURL());
         $this->json = json_decode($this->results, true);
         
         for($i=0; $i<10; $i++) {
@@ -44,25 +48,5 @@ class GoogleCalendar
         
         return $this->reply;
     }
-    
-//    public function getTitles()
-//    {
-//        $this->results = file_get_contents($this->makeURL());
-//        $this->json = json_decode($this->results, true);
-//        
-//        for($i=0; $i<10; $i++) {
-//            $this->titles[] = $this->json["items"][$i]["summary"];
-//        }
-//        
-//        $no = 0;
-//        $length = count($titles);
-//        foreach($this->titles as $title) {
-//            $this->reply .= $title;
-//            if($no++ !== $length) $this->reply .= "\n";
-//            if($this->json["items"][$i]["summary"] === "") break;
-//        }
-//        
-//        return $this->reply;
-//    }
     
 }

@@ -31,8 +31,7 @@ foreach($client->parseEvents() as $event) {
                 case 'text':
                     //strcmp 文字列の比較
                     if(strcmp($message['text'], '今日の予定') == 0) {
-                        $reply = $calendar->makeURL(date("n"), date("j"), date("Y"));
-//                        $reply = $calendar->getTitles();
+                        $reply = $calendar->getSummary();
  
                         $client->replyMessage(array(
                             'replyToken' => $event['replyToken'],
