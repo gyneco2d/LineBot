@@ -2,11 +2,21 @@
 
 class GoogleCalendar
 {
+//    private $month;
+//    private $day;
+//    private $year;
     
     public function __construct($API_URL)
     {
         $this->url = $API_URL;
     }
+    
+//    public function setDate($month, $day, $year)
+//    {
+//        $this->month = $month;
+//        $this->day = $day;
+//        $this->year = $year;
+//    }
     
     public function makeURL()
     {
@@ -20,10 +30,13 @@ class GoogleCalendar
         
         $this->params = array();
         $this->params[] = 'orderBy=startTime';
-        $this->params[] = 'maxResults=10';
+        //最大表示件数 指定しなければ全て
+//        $this->params[] = 'maxResults=10';
+        //ここから
         $this->params[] = 'timeMin='.urlencode(date('c', $this->t));
+        //ここまでのカレンダーを取得
         $this->params[] = 'timeMax='.urlencode(date('c', $this->t2));
- 
+        
         $this->url .= '&'.implode('&', $this->params);
         
         return $this->url;
@@ -34,16 +47,20 @@ class GoogleCalendar
         $this->results = file_get_contents(self::makeURL());
         $this->json = json_decode($this->results, true);
         
-        for($i=0; $i<10; $i++) {
-            $this->titles[] = $this->json["items"][$i]["summary"];
+        $this->summaries = array();
+        $no = 0;
+        $last = count($this->json["items"]) - 1;
+        foreach($this->json["items"] as $eachPlan) {
+            if($no !== last) {
+                $this->summaries[] = $eachPlan["summary"] . "\n";
+            } else {
+                $this->summaries[] = $eachPlan["summary"];
+            }
+            $no++;
         }
         
-        $no = 0;
-        $length = count($titles);
-        foreach($this->titles as $title) {
-            $this->reply .= $title;
-            if($no++ !== $length) $this->reply .= "\n";
-            if($this->json["items"][$i]["summary"] === "") break;
+        foreach($this->summaries as $summary) {
+            $this->reply .= $summary;
         }
         
         return $this->reply;
