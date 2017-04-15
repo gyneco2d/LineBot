@@ -29,30 +29,44 @@ foreach($client->parseEvents() as $event) {
             $message = $event['message'];
             switch($message['type']) {
                 case 'text':
-                    //strcmp 文字列の比較
-                    if(strcmp($message['text'], '今日の予定') == 0) {
-                        $reply = $calendar->getSummary();
-                        
-                        $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(
-                                array(
-                                    'type' => 'text',
-                                    'text' => $reply,
-                                )
-                            )
-                        ));
-                    } else {
-                        $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(
-                                array(
-                                    'type' => 'text',
-                                    'text' => '---'
-                                )
-                            )
-                        ));
+                    //予定コマンド
+                    if(preg_match('/^\/予定*/', $message['text'])) {
+                        //日時していなしは当日の予定
+                        if(preg_match('/^\/予定$/', $message['text'])) {
+                            $reply = $calendar->getSummary(date("n"), date("j"), date("Y"));
+                        }
+                        //予定コマンドと引数間のスペースは[\s　]で全角スペースも対応
+                        else if(preg_match('/^\/予定[\s　]*/', $message['text'])) {
+                            //指定日の書式は[月/日/年]の形
+                            if(preg_match('/^\/予定[\s　]+[0-9]+\/[0-9]+\/[0-9]{4}/', $message['text'])) {
+                                //空白文字を境に文字列を分割する
+                                $matches = preg_split('/[\s　]+/', $message['text']);
+                                $data = preg_split('/[\/]+/', $matches[1]);
+                                
+                                $reply = $calendar->getSummary($data[0], $data[1], $data[2]);
+                            }
+                            else {
+                                $reply = '引数の書式が無効です';
+                            }
+                        }
+                        else {
+                            $reply = '存在しないコマンド. またはコマンドと引数間に空白がありません.';
+                        }
                     }
+                    else {  //bot生存確認用
+                        $reply = '---';
+                    }
+                    
+                    $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(
+                            array(
+                                'type' => 'text',
+                                'text' => $reply
+                            )
+                        )
+                    ));
+                    
                     break;
                 default:
                     error_log("Unsupporeted message type: " . $message['type']);
