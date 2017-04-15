@@ -31,7 +31,7 @@ foreach($client->parseEvents() as $event) {
                 case 'text':
                     //予定コマンド
                     if(preg_match('/^\/予定*/', $message['text'])) {
-                        //日時していなしは当日の予定
+                        //日時指定なしは当日の予定
                         if(preg_match('/^\/予定$/', $message['text'])) {
                             $reply = $calendar->getSummary(date("n"), date("j"), date("Y"));
                         }
