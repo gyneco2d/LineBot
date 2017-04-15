@@ -8,4 +8,3 @@ $channelSecret = '5893f5d7c267ffca8b813ecc549df4a2';
 $CALENDAR_ID = 'k0o3dfu9i83595etda02lmccvo@group.calendar.google.com';
 $API_KEY = 'AIzaSyCVTdbp5OU1h8WTzEuDFxJoHCy4Lx3aOA4';
 $API_URL = 'https://www.googleapis.com/calendar/v3/calendars/'.$CALENDAR_ID.'/events?key='.$API_KEY.'&singleEvents=true';
-    
